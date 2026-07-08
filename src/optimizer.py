@@ -32,3 +32,24 @@ def min_variance_portfolio(mean_returns, cov_matrix):
     result = minimize(portfolio_volatility, initial_guess, args=args,
                        method='SLSQP', bounds=bounds, constraints=constraints)
     return result.x
+
+
+def min_variance_closed_form(cov_matrix):
+    """
+    Analytical solution: w* = Σ⁻¹1 / (1^T Σ⁻¹ 1)
+    No shorting constraint here — this allows negative weights,
+    unlike min_variance_portfolio() which uses scipy with bounds=(0,1).
+    So this won't exactly match scipy's bounded solution unless the
+    unconstrained optimum happens to have all non-negative weights.
+    """
+    n = cov_matrix.shape[0]
+    ones = np.ones(n)
+    inv_cov = np.linalg.inv(cov_matrix)
+
+    numerator = inv_cov @ ones
+    denominator = ones @ inv_cov @ ones
+
+    weights = numerator / denominator
+    return weights
+
+
