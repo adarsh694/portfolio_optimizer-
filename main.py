@@ -22,3 +22,20 @@ print(f"Expected Return: {ret:.2%}, Volatility: {std:.2%}, Sharpe: {sharpe:.2f}"
 
 mc_results, _ = simulate_random_portfolios(5000, mean_returns, cov_matrix)
 plot_everything(mc_results, mean_returns, cov_matrix)
+
+from src.backtest import rolling_backtest, compute_metrics
+
+results = rolling_backtest(prices, log_returns)
+metrics = compute_metrics(results)
+print("\nBacktest Results:")
+print(metrics)
+
+results.plot(figsize=(10, 6), title="Rolling Backtest: Optimized vs Equal-Weight")
+import matplotlib.pyplot as plt
+plt.ylabel("Portfolio Value (normalized to $1)")
+plt.savefig("backtest_results.png", dpi=150)
+
+from src.backtest import compute_turnover
+avg_turnover = compute_turnover(prices, log_returns)
+print(f"\nAverage turnover per rebalance: {avg_turnover:.2%}")
+
